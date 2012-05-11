@@ -17,6 +17,8 @@ public class SimpleDB extends AWSTask {
     private static final Map<String, String> REGION_2_ENDPOINT = new HashMap<String, String>();
 
     static {
+        REGION_2_ENDPOINT.put("", "sdb.amazonaws.com");
+        REGION_2_ENDPOINT.put("US", "sdb.amazonaws.com");
         REGION_2_ENDPOINT.put("EU", "sdb.eu-west-1.amazonaws.com");
         REGION_2_ENDPOINT.put("us-west-1", "sdb.us-west-1.amazonaws.com");
         REGION_2_ENDPOINT.put("us-west-2", "sdb.us-west-2.amazonaws.com");

@@ -23,6 +23,8 @@ public class S3PutTask extends AWSTask {
     private static final Map<String, String> REGION_2_ENDPOINT = new HashMap<String, String>();
 
     static {
+        REGION_2_ENDPOINT.put("", "s3.amazonaws.com");
+        REGION_2_ENDPOINT.put("US", "s3.amazonaws.com");
         REGION_2_ENDPOINT.put("EU", "s3-eu-west-1.amazonaws.com");
         REGION_2_ENDPOINT.put("us-west-1", "s3-us-west-1.amazonaws.com");
         REGION_2_ENDPOINT.put("us-west-2", "s3-us-west-2.amazonaws.com");
