@@ -142,5 +142,29 @@ public class S3PutTaskTest {
         s3.deleteObject(bucket, objectKey);
     }
 
+    @Test
+    public void testPutGlobalCacheControl() throws IOException {
+        File tempFile = File.createTempFile("aws-test", ".txt");
+        FileWriter str = new FileWriter(tempFile);
+        str.write("Super test content of super test file");
+        str.close();
+        FileSet set = new FileSet();
+        set.setDir(tempFile.getParentFile());
+        FilenameSelector selector = new FilenameSelector();
+        selector.setName(tempFile.getName());
+        set.addFilename(selector);
+        task.setDest("aws-ant-tasks-test");
+        task.addFileset(set);
+        final String cacheControlValue = "max-age=9600, must-revalidate";
+        task.setCacheControl(cacheControlValue);
+        task.execute();
+        String objectKey = "aws-ant-tasks-test/" + tempFile.getName();
+        S3Object obj = s3.getObject(bucket, objectKey);
+        Assert.assertEquals(cacheControlValue,
+                obj.getObjectMetadata().getCacheControl());
+        s3.deleteObject(bucket, objectKey);
+    }
+
+
 
 }

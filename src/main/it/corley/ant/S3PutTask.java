@@ -54,6 +54,11 @@ public class S3PutTask extends AWSTask {
     private String contentType;
 
     /**
+     * Cache-Control to be set globally for each uploaded file.
+     */
+    private String cacheControl;
+
+    /**
      * Filesets containing content to be uploaded
      */
     protected List<FileSet> filesets = new LinkedList<FileSet>();
@@ -79,6 +84,7 @@ public class S3PutTask extends AWSTask {
         if (region != null) {
             if (REGION_2_ENDPOINT.containsKey(region)) {
                 s3.setEndpoint(REGION_2_ENDPOINT.get(region));
+                log("Using region: " +REGION_2_ENDPOINT.get(region), Project.MSG_INFO);
             } else {
                 log("Region " + region + " given but not found in the region to endpoint map. Will use it as an endpoint",
                         Project.MSG_WARN);
@@ -117,18 +123,22 @@ public class S3PutTask extends AWSTask {
         if (isPublicRead()) {
             por.setCannedAcl(CannedAccessControlList.PublicRead);
         }
-        boolean metadataSet = false;
+        boolean contentTypeSet = false;
         String fileName = file.getName();
         for (ContentTypeMapping mapping : contentTypeMappings) {
             if (fileName.endsWith(mapping.getExtension())) {
                 metadata.setContentType(mapping.getContentType());
-                metadataSet = true;
+                contentTypeSet = true;
                 break;
             }
         }
-        if (contentType != null && !metadataSet) {
+        if (contentType != null && !contentTypeSet) {
             metadata.setContentType(contentType);
         }
+        if(cacheControl != null) {
+            metadata.setCacheControl(cacheControl);
+        }
+
         por.setMetadata(metadata);
     }
 
@@ -167,6 +177,10 @@ public class S3PutTask extends AWSTask {
 
     public void addContentTypeMapping(ContentTypeMapping mapping) {
         contentTypeMappings.add(mapping);
+    }
+
+    public void setCacheControl(String cacheControl) {
+        this.cacheControl = cacheControl;
     }
 
     public void addFileset(FileSet set) {
